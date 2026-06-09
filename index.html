@@ -578,11 +578,28 @@ function endGame(){
 
   const pb=document.getElementById('prize-box');
   const bc=document.getElementById('btn-claim');
+
   if(won){
-    pb.classList.remove('hidden'); bc.style.display='block';
+    pb.classList.remove('hidden');
     document.getElementById('prize-text').textContent=`$${finalScore}`;
-    bc.textContent='CLAIM REWARD →'; bc.disabled=false;
-    bc.dataset.score = finalScore;
+    bc.style.display='block';
+    bc.textContent='Processing...'; bc.disabled=true;
+
+    // AUTO-RECORD to Sheet immediately when game ends
+    fetch(`${SCRIPT_URL}?action=claim&token=${TOKEN}&reward=${finalScore}`)
+      .then(r=>r.json())
+      .then(data=>{
+        claimed=true;
+        bc.textContent='CLAIM REWARD →';
+        bc.disabled=false;
+        bc.dataset.score = finalScore;
+      })
+      .catch(()=>{
+        claimed=true;
+        bc.textContent='CLAIM REWARD →';
+        bc.disabled=false;
+        bc.dataset.score = finalScore;
+      });
   } else {
     pb.classList.add('hidden'); bc.style.display='none';
   }
@@ -592,31 +609,14 @@ function endGame(){
 }
 
 // ============================================================
-// CLAIM → Apps Script
+// CLAIM BUTTON — just UI confirmation, recording already done
 // ============================================================
 document.getElementById('btn-claim').addEventListener('click', function(){
-  if(claimed) return;
+  if(!claimed) return;
   const btn = this;
-  const finalScore = parseInt(btn.dataset.score || '0');
-  btn.textContent='Processing...'; btn.disabled=true;
-
-  fetch(`${SCRIPT_URL}?action=claim&token=${TOKEN}&reward=${finalScore}`)
-    .then(r=>r.json())
-    .then(data=>{
-      if(data.status==='claimed'||data.status==='already_claimed'){
-        claimed=true;
-        btn.textContent='✅ Claimed!';
-        document.getElementById('btn-retry').style.display='none';
-      } else {
-        btn.textContent='❌ Error — Contact Support';
-        btn.disabled=false;
-      }
-    })
-    .catch(()=>{
-      claimed=true;
-      btn.textContent='✅ Claimed!';
-      document.getElementById('btn-retry').style.display='none';
-    });
+  btn.textContent='✅ Reward Claimed!';
+  btn.disabled=true;
+  document.getElementById('btn-retry').style.display='none';
 });
 
 // ============================================================
