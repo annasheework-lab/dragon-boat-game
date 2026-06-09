@@ -114,7 +114,7 @@
 // ============================================================
 // CONFIG
 // ============================================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZf7s86z3HhvQ5JzOOu5L0rFrbnvgFkfsPsL78Dh4OEmOHCxiVPrhO6JMS7b.../exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZf7s86z3HhvQ5JzOOu5L0rFrbnvgFkfsPsL78Dh4OEmOHCxiVPrhO6JMS7bAwNvVB/exec';
 
 const LEVEL_SCORES = {
   1: { normal:1,  gold:5,  bomb:10, max:15 },
@@ -165,7 +165,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('leg-normal').textContent = `Dumpling +${SC.normal}`;
   document.getElementById('leg-gold').textContent   = `Golden +${SC.gold}`;
   document.getElementById('leg-bomb').textContent   = `Bomb -${SC.bomb}pts`;
-  document.getElementById('max-hint').textContent   = `Max reward $${SC.max} · 1 pt = $1`;
+  document.getElementById('max-hint').textContent   = `1 pt = $1 cash reward`;
 
   if (!TOKEN) {
     showInvalid('Invalid link: missing token.');
@@ -188,10 +188,7 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     })
     .catch(() => {
-      scLoading.classList.add('hidden');
-      document.getElementById('welcome-txt').textContent = `👋 Welcome, ${USERNAME || 'Player'}!`;
-      document.getElementById('level-badge').textContent = `⭐ LEVEL ${LEVEL}`;
-      scStart.classList.remove('hidden');
+      showInvalid('Unable to verify link. Please check your connection or contact support.');
     });
 });
 
